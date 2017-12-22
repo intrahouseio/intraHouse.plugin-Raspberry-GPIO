@@ -1,0 +1,6 @@
+{
+    "id":"raspgpio",
+    "description":"Raspberry GPIO",
+    "url":"",
+	"version":"1.0.2"
+}
