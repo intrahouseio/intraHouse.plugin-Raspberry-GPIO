@@ -1,12 +1,17 @@
 /**
  * Функции - адаптеры для rpi
  */
+
+const pref = 'GPIO';
+
 module.exports = {
+
   // Передать в командной строке входы и выходы:  5=U,7=D 22=1,20=0
   getArgs: function(unit, houser) {
+
     // Получить все каналы для rpi
-    let chans = houser.jdbGet({ name: 'devprops', filter: { unit: 'rpi' } });
-    if (chans.length <= 0) throw { message: 'No channels for rpi!!' };
+    let chans = houser.jdbGet({ name: 'devprops', filter: { unit: 'raspgpio' } });
+    if (chans.length <= 0) throw { message: 'No channels for raspgpio!!' };
     let ioSet = buildIoSet(chans);
     let dnSet = buildDnSet(chans);
 
@@ -44,7 +49,7 @@ module.exports = {
 
     let arr = tele.substr(4).split('=');
     if (arr && arr.length == 2) {
-      return {type:'data', data:[{id:arr[0], value:arr[1]}]};
+      return {type:'data', data:[{id:pinToChan(arr[0]), value:arr[1]}]};
     }  
   },
 
@@ -53,17 +58,25 @@ module.exports = {
     let arr=[];
     if (mes && mes.data && mes.data.length >0) {
       mes.data.forEach(item => {
-        arr.push(item.chan+'='+item.value)
+        arr.push(chanToPin(item.chan)+'='+item.value)
       });
       if (arr.length>0) return 'RPI?'+arr.join('&');
     }
   }
-
 };
 
 
 /** Частные модули */
+// 5 -> GPIO05
+function pinToChan(pin) {
+    pin = Number(pin);
+    return pref+(pin<10 ? '0':'')+pin;
+}
 
+// GPIO05 -> 5
+function chanToPin(chan) {
+    return Number(chan.substr(4));
+}
 
 // Выбрать список каналов
 function buildIoSet(chans) {
