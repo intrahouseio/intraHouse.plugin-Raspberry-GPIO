@@ -2,80 +2,84 @@
  * Функции - адаптеры для rpi
  */
 
-const pref = 'GPIO';
+const pref = "GPIO";
 
 module.exports = {
-
   // Передать в командной строке входы и выходы:  5=U,7=D 22=1,20=0
   getArgs: function(unit, houser) {
-
     // Получить все каналы для rpi
-    let chans = houser.jdbGet({ name: 'devprops', filter: { unit: 'raspgpio' } });
-    if (chans.length <= 0) throw { message: 'No channels for raspgpio!!' };
+    let chans = houser.jdbGet({
+      name: "devprops",
+      filter: { unit: "raspgpio" }
+    });
+    if (chans.length <= 0) throw { message: "No channels for raspgpio!!" };
     let ioSet = buildIoSet(chans);
     let dnSet = buildDnSet(chans);
 
     let argsArr = [];
     let inarr = [];
     let outarr = [];
-    Object.keys(ioSet).forEach(io =>{
-        switch (ioSet[io]) {
-          case 'IU':
-            inarr.push(io + '=U');
-            break;
-          case 'ID':
-            inarr.push(io + '=D');
-            break;
-          
-          case 'O':
+    Object.keys(ioSet).forEach(io => {
+      switch (ioSet[io]) {
+        case "IU":
+          inarr.push(io + "=U");
+          break;
+        case "ID":
+          inarr.push(io + "=D");
+          break;
+
+        case "O":
           // Здесь надо вернуть текущее значение, т к это потенциальный выход - найти устройство
-            if (dnSet[io]) {
-              let dobj = houser.getDevobj(dnSet[io]);
-              let val = (dobj) ? dobj.dval : 0;
-              outarr.push(io + '='+val); 
-            }
-            break;  
-        }
+          if (dnSet[io]) {
+            let dobj = houser.getDevobj(dnSet[io]);
+            let val = dobj ? dobj.dval : 0;
+            outarr.push(io + "=" + val);
+          }
+          break;
+      }
     });
 
-    argsArr.push(inarr.join(','));
-    argsArr.push(outarr.join(','));
+    argsArr.push(inarr.join(","));
+    argsArr.push(outarr.join(","));
     return argsArr;
   },
 
   // Пришла строка RPI?5=1 - сформируем объект {type:data, data:[{id:xx, value:yy}]}
   readTele: function(tele, houser) {
-    if (!tele || tele.length <5)  return;
+    if (!tele || tele.length < 5) return;
 
-    let arr = tele.substr(4).split('=');
+    let arr = tele.substr(4).split("=");
     if (arr && arr.length == 2) {
-      return {type:'data', data:[{id:pinToChan(arr[0]), value:arr[1]}]};
-    }  
+      return { type: "data", data: [{ id: pinToChan(arr[0]), value: arr[1] }] };
+    }
   },
 
   // Нужно передать команду { type: 'act', data:[{id:xx, value:yy}] } в виде строки RPI?20=1&21=0
   formTele: function(mes, houser) {
-    let arr=[];
-    if (mes && mes.data && mes.data.length >0) {
+    let arr = [];
+    if (mes && mes.data && mes.data.length > 0) {
       mes.data.forEach(item => {
-        arr.push(chanToPin(item.chan)+'='+item.value)
+        arr.push(chanToPin(item.chan) + "=" + item.value);
       });
-      if (arr.length>0) return 'RPI?'+arr.join('&');
+      if (arr.length > 0) return "RPI?" + arr.join("&");
     }
+  },
+
+  formMessage: function(mes, houser) {
+    return mes;
   }
 };
-
 
 /** Частные модули */
 // 5 -> GPIO05
 function pinToChan(pin) {
-    pin = Number(pin);
-    return pref+(pin<10 ? '0':'')+pin;
+  pin = Number(pin);
+  return pref + (pin < 10 ? "0" : "") + pin;
 }
 
 // GPIO05 -> 5
 function chanToPin(chan) {
-    return Number(chan.substr(4));
+  return Number(chan.substr(4));
 }
 
 // Выбрать список каналов
@@ -86,24 +90,26 @@ function buildIoSet(chans) {
       if (!ioSet[item.chan]) {
         ioSet[item.chan] = item.gptype;
       } else {
-        if (ioSet[item.chan] != item.gptype)  throw { message: 'Different types for '+item.chan };
-      }  
-    }  
+        if (ioSet[item.chan] != item.gptype)
+          throw { message: "Different types for " + item.chan };
+      }
+    }
   });
-  return ioSet;  
+  return ioSet;
 }
 
 // Выбрать список устройств для потенциальных актуаторов
 function buildDnSet(chans) {
   let dnSet = {};
   chans.forEach(item => {
-    if (item.chan && (item.gptype == 'O') && (item.dn)) {
+    if (item.chan && item.gptype == "O" && item.dn) {
       if (!dnSet[item.chan]) {
         dnSet[item.chan] = item.dn;
       } else {
-        if (dnSet[item.chan] != item.dn)  throw { message: 'Different devices for '+item.chan };
-      }  
-    }  
+        if (dnSet[item.chan] != item.dn)
+          throw { message: "Different devices for " + item.chan };
+      }
+    }
   });
-  return dnSet;  
+  return dnSet;
 }
