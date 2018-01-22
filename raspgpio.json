@@ -10,44 +10,17 @@
     ],
 
   "chpattern": [
-     {
-      "name": "chan",
-      "note": "GPIO",
-      "type": "droplist",
-	  "data":[
-	  {"id":"GPIO05", "name":"GPIO05"},
-	  {"id":"GPIO06", "name":"GPIO06"},
-	  {"id":"GPIO07", "name":"GPIO07"},
-	  {"id":"GPIO08", "name":"GPIO08"},
-	  {"id":"GPIO09", "name":"GPIO09"},
-	  {"id":"GPIO10", "name":"GPIO10"},
-	  {"id":"GPIO11", "name":"GPIO11"},
-	  {"id":"GPIO12", "name":"GPIO12"},
-	  {"id":"GPIO13", "name":"GPIO13"},
-	  {"id":"GPIO16", "name":"GPIO16"},
-	  {"id":"GPIO17", "name":"GPIO17"},
-	  {"id":"GPIO18", "name":"GPIO18"},
-	  {"id":"GPIO19", "name":"GPIO19"},
-	  {"id":"GPIO20", "name":"GPIO20"},
-	  {"id":"GPIO21", "name":"GPIO21"},
-	  {"id":"GPIO22", "name":"GPIO22"},
-	  {"id":"GPIO23", "name":"GPIO23"},
-	  {"id":"GPIO24", "name":"GPIO24"},
-	  {"id":"GPIO25", "name":"GPIO25"},
-	  {"id":"GPIO26", "name":"GPIO26"},
-	  {"id":"GPIO27", "name":"GPIO27"}
-	  ]
-    },
+     
 	
 	{
-      "name": "gptype",
+      "name": "desc",
       "note": "GPIO type",
       "type": "droplist",
 	  "data":[
-	  {"id":"IN_UP", "name":"Input Pull-Up", "visible":"data.op == 'R'"},
-	  {"id":"IN_DN", "name":"Input Pull-Down", "visible":"data.op == 'R'"},
+	  {"id":"IN_UP", "name":"Input Pull-Up"},
+	  {"id":"IN_DN", "name":"Input Pull-Down"},
 	  {"id":"OUT",  "name":"Output "},
-	  {"id":"OUT_PULSE", "name":"Pulse Output ", "visible":"data.op == 'W'"}
+	  {"id":"OUT_PULSE", "name":"Pulse Output "}
 	  ]
     },
     
@@ -56,14 +29,29 @@
       "note": "Pulse duration",
        "val": "",
        "type": "string",
-	   "visible":"data.gptype == 'OUT_PULSE'"
+	   "visible":"data.desc == 'OUT_PULSE'"
 	}
   ],
   
   
     "channels": [
-        {}
+        {"id":"GPIO05", "desc":"OUT"},
+        {"id":"GPIO06", "desc":"OUT"},
+        {"id":"GPIO07", "desc":"OUT"},
+        {"id":"GPIO08", "desc":"OUT"},
+        {"id":"GPIO09", "desc":"OUT"},
+        {"id":"GPIO10", "desc":"OUT"},
+        {"id":"GPIO11", "desc":"OUT"},
+        {"id":"GPIO12", "desc":"OUT"}
     ],
+
+    "genrules":{
+      "IN_UP":{"cl":"SensorD"},
+      "IN_DN":{"cl":"SensorD"},
+      "OUT":{"cl":"ActorD"},
+      "OUT_PULSE":{} 
+    },
+
     "actions": [
         {}
     ]
