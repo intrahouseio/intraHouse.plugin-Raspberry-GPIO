@@ -12,7 +12,7 @@ module.exports = {
   getArgs: function(unit, houser) {
     // Получить все каналы для rpi
     let chans = houser.jdbGet({
-      name: "devprops",
+      name: "devhard",
       filter: { unit: "raspgpio" }
     });
     if (chans.length <= 0) throw { message: "No channels for raspgpio!!" };
@@ -100,11 +100,12 @@ function chanToPin(chan) {
 function buildIoSet(chans) {
   let ioSet = {};
   chans.forEach(item => {
-    if (item.chan && item.gptype) {
+    // if (item.chan && item.gptype) {
+    if (item.chan && item.desc) {
       if (!ioSet[item.chan]) {
-        ioSet[item.chan] = item.gptype;
+        ioSet[item.chan] = item.desc;
       } else {
-        if (ioSet[item.chan] != item.gptype)
+        if (ioSet[item.chan] != item.desc)
           throw { message: "Different types for " + item.chan };
       }
     }
@@ -116,7 +117,7 @@ function buildIoSet(chans) {
 function buildDnSet(chans) {
   let dnSet = {};
   chans.forEach(item => {
-    if (item.chan && item.gptype == "OUT" && item.dn) {
+    if (item.chan && item.desc == "OUT" && item.dn) {
       if (!dnSet[item.chan]) {
         dnSet[item.chan] = item.dn;
       } else {
