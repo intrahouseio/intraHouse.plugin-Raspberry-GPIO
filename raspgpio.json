@@ -42,7 +42,19 @@
         {"id":"GPIO09", "desc":"OUT"},
         {"id":"GPIO10", "desc":"OUT"},
         {"id":"GPIO11", "desc":"OUT"},
-        {"id":"GPIO12", "desc":"OUT"}
+		{"id":"GPIO12", "desc":"OUT"},
+		{"id":"GPIO13", "desc":"OUT"},
+		{"id":"GPIO16", "desc":"OUT"},
+		{"id":"GPIO17", "desc":"OUT"},
+		{"id":"GPIO18", "desc":"OUT"},
+		{"id":"GPIO19", "desc":"OUT"},
+		{"id":"GPIO20", "desc":"OUT"},
+		{"id":"GPIO21", "desc":"OUT"},
+		{"id":"GPIO22", "desc":"OUT"},
+		{"id":"GPIO23", "desc":"OUT"},
+		{"id":"GPIO24", "desc":"OUT"},
+		{"id":"GPIO25", "desc":"OUT"},
+		{"id":"GPIO26", "desc":"OUT"}		
     ],
 
     "genrules":{
