@@ -12,9 +12,9 @@ module.exports = {
     // Получить все каналы для rpi
     let chans = houser.jdbGet({
       name: "devhard",
-      filter: { unit: "raspgpio" }
+      filter: { unit }
     });
-    if (chans.length <= 0) throw { message: "No channels for raspgpio!!" };
+    if (chans.length <= 0) throw { message: "No used channels for "+unit+"!" };
     let ioSet = buildIoSet(chans);
     let dnSet = buildDnSet(chans);
 
