@@ -9,11 +9,6 @@ const pref = "GPIO";
 module.exports = {
   // Передать в командной строке входы и выходы:  5=U,7=D 22=1,20=0
   getArgs: function (unit, houser) {
-    // Получить все каналы для rpi
-    let chans = houser.jdbGet({
-      name: "devhard",
-      filter: { unit }
-    });
 
     let chans = houser.pp.getUnitChannels(unit);
     if (chans.length <= 0) throw { message: "No channels for "+unit+"!" };
@@ -102,12 +97,12 @@ function chanToPin(chan) {
 function buildIoSet(chans) {
   let ioSet = {};
   chans.forEach(item => {
-    if (item.chan && item.desc) {
-      if (!ioSet[item.chan]) {
-        ioSet[item.chan] = item.desc;
+    if (item.id && item.desc) {
+      if (!ioSet[item.id]) {
+        ioSet[item.id] = item.desc;
       } else {
-        if (ioSet[item.chan] != item.desc)
-          throw { message: "Different types for " + item.chan };
+        if (ioSet[item.id] != item.desc)
+          throw { message: "Different types for " + item.idn };
       }
     }
   });
