@@ -14,9 +14,14 @@ module.exports = {
       name: "devhard",
       filter: { unit }
     });
-    if (chans.length <= 0) throw { message: "No used channels for "+unit+"!" };
+
+    let chans = houser.pp.getUnitChannels(unit);
+    if (chans.length <= 0) throw { message: "No channels for "+unit+"!" };
+
+    let links = houser.jdbGet({ name: "devhard", filter: { unit }});
+  
     let ioSet = buildIoSet(chans);
-    let dnSet = buildDnSet(chans);
+    let dnSet = buildDnSet(links);
 
     let argsArr = [];
     let inarr = [];
@@ -32,12 +37,20 @@ module.exports = {
 
         case "OUT":
           // Здесь надо вернуть текущее значение, т к это потенциальный выход - найти устройство
+          // Если устройства нет - сбросить в 0
+          let val = 0;
           if (dnSet[io]) {
             let dobj = houser.getDevobj(dnSet[io]);
-            let val = dobj ? dobj.dval : 0;
-            outarr.push(chanToPin(io) + "=" + val);
-          }
+            val = dobj ? dobj.dval : 0;
+          } 
+          outarr.push(chanToPin(io) + "=" + val);
           break;
+
+        case "OUT_PULSE":
+          // Импульсные всегда в 0
+          outarr.push(chanToPin(io) + "=0");
+          break;   
+          
       }
     });
 
@@ -102,9 +115,9 @@ function buildIoSet(chans) {
 }
 
 // Выбрать список устройств для потенциальных актуаторов
-function buildDnSet(chans) {
+function buildDnSet(links) {
   let dnSet = {};
-  chans.forEach(item => {
+  links.forEach(item => {
     if (item.chan && item.desc == "OUT" && item.dn) {
       if (!dnSet[item.chan]) {
         dnSet[item.chan] = item.dn;

@@ -2,5 +2,5 @@
     "id":"raspgpio",
     "description":"Raspberry GPIO",
     "cross":true,
-	"version":"1.0.3"
+	"version":"1.0.7"
 }
